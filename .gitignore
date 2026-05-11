@@ -1,0 +1,91 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# =========================
+# Model Files
+# =========================
+*.h5
+*.pt
+*.pth
+*.ckpt
+
+# Keep main trained model if desired
+!model/bone_age_model.pth
+
+# =========================
+# Dataset & Large Files
+# =========================
+data/
+datasets/
+*.zip
+*.tar
+*.gz
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+
+# =========================
+# Environment Variables
+# =========================
+.env
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+
+# =========================
+# macOS
+# =========================
+.DS_Store
+
+# =========================
+# Windows
+# =========================
+Thumbs.db
+
+# =========================
+# Node Modules (Future Frontend)
+# =========================
+node_modules/
+
+# =========================
+# Build / Cache
+# =========================
+.cache/
+coverage/
+
+# =========================
+# TensorBoard
+# =========================
+runs/
+wandb/
+
+# =========================
+# Temporary Files
+# =========================
+tmp/
+temp/
+*.tmp

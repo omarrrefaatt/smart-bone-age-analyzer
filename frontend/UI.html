@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BoneAge AI — Skeletal Maturity Assessment</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.64-.8 3.16-2.15 4.1zM10 18h4v1c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-1z"
+            />
+          </svg>
+        </div>
+        <span class="logo-text">Bone<span>Age</span> AI</span>
+      </div>
+      <div class="header-right">
+        <div class="server-status">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusLabel">Checking…</span>
+        </div>
+        <span class="header-badge">ResNet-18 · Your Model</span>
+      </div>
+    </header>
+
+    <div class="hero">
+      <p class="hero-eyebrow">Deep Learning · Skeletal Maturity</p>
+      <h1>Bone Age Assessment<br />from Hand X-Rays</h1>
+      <p>
+        Upload a hand radiograph and get a predicted skeletal age directly from
+        your trained ResNet-18 model.
+      </p>
+    </div>
+
+    <div class="app">
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M16 12l-4-4-4 4M12 8v8"
+                />
+              </svg>
+            </div>
+            <div>
+              <h2>Upload Radiograph</h2>
+              <p>PNG or JPG hand X-ray image</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="pipeline">
+              <div class="step" id="step1">
+                <span class="step-num">①</span>Upload
+              </div>
+              <div class="step" id="step2">
+                <span class="step-num">②</span>Configure
+              </div>
+              <div class="step" id="step3">
+                <span class="step-num">③</span>Infer
+              </div>
+              <div class="step" id="step4">
+                <span class="step-num">④</span>Result
+              </div>
+            </div>
+
+            <div class="upload-zone" id="uploadZone">
+              <input
+                type="file"
+                id="fileInput"
+                accept="image/png,image/jpeg,image/jpg"
+              />
+              <div class="upload-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                >
+                  <path
+                    d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"
+                  />
+                </svg>
+              </div>
+              <h3>Drop your X-ray here</h3>
+              <p>or click anywhere to browse files</p>
+              <div class="formats">
+                <span class="tag">PNG</span><span class="tag">JPG</span
+                ><span class="tag">JPEG</span>
+              </div>
+            </div>
+
+            <div class="preview-wrap" id="previewWrap">
+              <img id="previewImg" src="" alt="X-ray preview" />
+              <button class="preview-remove" id="removeBtn" aria-label="Remove">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  width="14"
+                  height="14"
+                >
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="sex-selector">
+              <label>Patient biological sex</label>
+              <div class="sex-options">
+                <div class="sex-option">
+                  <input
+                    type="radio"
+                    name="sex"
+                    id="male"
+                    value="male"
+                    checked
+                  />
+                  <label for="male">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    >
+                      <circle cx="10.5" cy="13.5" r="5" />
+                      <path d="M19.5 4.5l-5 5M19.5 4.5h-4m4 0v4" />
+                    </svg>
+                    Male
+                  </label>
+                </div>
+                <div class="sex-option">
+                  <input type="radio" name="sex" id="female" value="female" />
+                  <label for="female">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    >
+                      <circle cx="12" cy="9" r="5" />
+                      <path d="M12 14v7M9 18h6" />
+                    </svg>
+                    Female
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="endpoint-section">
+              <label>Flask server endpoint</label>
+              <div class="endpoint-row">
+                <input
+                  type="text"
+                  id="endpointInput"
+                  value="http://192.168.1.194:3000"
+                  placeholder="http://192.168.1.194:3000"
+                />
+                <button class="btn-test" id="testBtn">Test</button>
+              </div>
+            </div>
+
+            <div class="error-msg" id="errorMsg"></div>
+
+            <button class="btn-analyze" id="analyzeBtn" disabled>
+              <div class="spinner" id="spinner"></div>
+              <svg
+                id="btnIcon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+              <span id="btnText">Analyse X-Ray</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="disclaimer" style="margin-top: 1rem">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+            />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <p>
+            <strong>Research use only.</strong> Not a medical device. Must not
+            be used for clinical diagnosis or patient management.
+          </p>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="result-card">
+          <div class="result-placeholder" id="resultPlaceholder">
+            <svg
+              viewBox="0 0 64 64"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <rect x="12" y="4" width="40" height="56" rx="4" />
+              <line x1="20" y1="16" x2="44" y2="16" />
+              <line x1="20" y1="24" x2="44" y2="24" />
+              <line x1="20" y1="32" x2="36" y2="32" />
+              <circle cx="42" cy="46" r="10" />
+              <path d="M38 46l3 3 5-5" />
+            </svg>
+            <p>
+              Your bone age assessment<br />will appear here after analysis.
+            </p>
+          </div>
+          <div class="result-content" id="resultContent">
+            <div class="result-hero">
+              <div class="result-label">Predicted Skeletal Age</div>
+              <div class="result-months" id="resultMonths">
+                — <span>mo</span>
+              </div>
+              <div class="result-years" id="resultYears">—</div>
+            </div>
+            <div class="result-body">
+              <div class="result-row">
+                <div class="result-row-label">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  Age in months
+                </div>
+                <div class="result-row-value" id="rowMonths">—</div>
+              </div>
+              <div class="result-row">
+                <div class="result-row-label">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  >
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  Age in years
+                </div>
+                <div class="result-row-value" id="rowYears">—</div>
+              </div>
+              <div class="result-row">
+                <div class="result-row-label">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  >
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path
+                      d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
+                    />
+                  </svg>
+                  Developmental stage
+                </div>
+                <div class="result-row-value" id="rowStage">—</div>
+              </div>
+              <div class="result-row">
+                <div class="result-row-label">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  >
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  Patient sex
+                </div>
+                <div class="result-row-value" id="rowSex">—</div>
+              </div>
+            </div>
+            <div class="percentile-section">
+              <div class="percentile-label">
+                <span>Position in 0–216 month range</span>
+                <span id="percentilePct">—%</span>
+              </div>
+              <div class="percentile-track">
+                <div class="percentile-fill" id="percentileFill"></div>
+              </div>
+            </div>
+            <div class="note-section" id="noteSection">
+              <div class="note-box" id="noteBox"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>Developmental stages</h3>
+          <div class="age-stages">
+            <div class="age-stage" data-min="0" data-max="24">
+              <div class="stage-dot"></div>
+              <div class="stage-name">Infant</div>
+              <div class="stage-range">0–24 mo</div>
+            </div>
+            <div class="age-stage" data-min="25" data-max="60">
+              <div class="stage-dot"></div>
+              <div class="stage-name">Toddler</div>
+              <div class="stage-range">25–60 mo</div>
+            </div>
+            <div class="age-stage" data-min="61" data-max="120">
+              <div class="stage-dot"></div>
+              <div class="stage-name">Child</div>
+              <div class="stage-range">61–120 mo</div>
+            </div>
+            <div class="age-stage" data-min="121" data-max="155">
+              <div class="stage-dot"></div>
+              <div class="stage-name">Pre-adolescent</div>
+              <div class="stage-range">121–155 mo</div>
+            </div>
+            <div class="age-stage" data-min="156" data-max="216">
+              <div class="stage-dot"></div>
+              <div class="stage-name">Adolescent</div>
+              <div class="stage-range">156–216 mo</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-card">
+          <h3>Quick start</h3>
+          <div class="setup-step">
+            <div class="setup-num">1</div>
+            <p>
+              Install:
+              <code>pip install flask flask-cors torch torchvision pillow</code>
+            </p>
+          </div>
+          <div class="setup-step">
+            <div class="setup-num">2</div>
+            <p>
+              Place checkpoint at <code>models/best_model.pth</code> beside
+              <code>app.py</code>
+            </p>
+          </div>
+          <div class="setup-step">
+            <div class="setup-num">3</div>
+            <p>
+              Run: <code>python app.py</code> — server starts at
+              <code>localhost:5000</code>
+            </p>
+          </div>
+          <div class="setup-step">
+            <div class="setup-num">4</div>
+            <p>
+              Click <strong>Test</strong> above to confirm the server is online,
+              then upload your X-ray.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <strong>BoneAge AI</strong> — RSNA Paediatric Bone Age · ResNet-18 ·
+      PyTorch + Flask<br />
+      For research &amp; educational use only. Not for clinical diagnosis.
+    </footer>
+
+    <script>
+      const MAX_AGE = 216;
+      let serverBase = "http://192.168.1.194:3000";
+
+      const $ = (id) => document.getElementById(id);
+      const fileInput = $("fileInput"),
+        uploadZone = $("uploadZone");
+      const previewWrap = $("previewWrap"),
+        previewImg = $("previewImg");
+      const removeBtn = $("removeBtn"),
+        analyzeBtn = $("analyzeBtn");
+      const spinner = $("spinner"),
+        btnIcon = $("btnIcon");
+      const btnText = $("btnText"),
+        errorMsg = $("errorMsg");
+      const endpointInput = $("endpointInput"),
+        testBtn = $("testBtn");
+      const statusDot = $("statusDot"),
+        statusLabel = $("statusLabel");
+      const resultPlaceholder = $("resultPlaceholder"),
+        resultContent = $("resultContent");
+      const resultMonths = $("resultMonths"),
+        resultYears = $("resultYears");
+      const rowMonths = $("rowMonths"),
+        rowYears = $("rowYears");
+      const rowStage = $("rowStage"),
+        rowSex = $("rowSex");
+      const percentileFill = $("percentileFill"),
+        percentilePct = $("percentilePct");
+      const noteSection = $("noteSection"),
+        noteBox = $("noteBox");
+      const stages = document.querySelectorAll(".age-stage");
+      const steps = [1, 2, 3, 4].map((i) => $("step" + i));
+
+      function setStep(n) {
+        steps.forEach((s, i) => {
+          s.classList.remove("done", "active");
+          if (i < n) s.classList.add("done");
+          else if (i === n) s.classList.add("active");
+        });
+      }
+      setStep(0);
+
+      /* ── Server health ──────────────────────────────────────── */
+      async function checkHealth(base) {
+        try {
+          const r = await fetch(base + "/health", {
+            signal: AbortSignal.timeout(4000),
+          });
+          return r.ok;
+        } catch {
+          return false;
+        }
+      }
+
+      async function updateStatus() {
+        serverBase = endpointInput.value.trim().replace(/\/$/, "");
+        statusDot.className = "status-dot";
+        statusLabel.textContent = "Checking…";
+        const ok = await checkHealth(serverBase);
+        statusDot.classList.add(ok ? "online" : "offline");
+        statusLabel.textContent = ok ? "Server online" : "Server offline";
+      }
+
+      testBtn.addEventListener("click", updateStatus);
+      endpointInput.addEventListener("change", updateStatus);
+      updateStatus();
+
+      /* ── File handling ──────────────────────────────────────── */
+      let currentFile = null;
+
+      function handleFile(file) {
+        if (!file || !file.type.startsWith("image/")) return;
+        currentFile = file;
+        previewImg.src = URL.createObjectURL(file);
+        previewWrap.style.display = "block";
+        analyzeBtn.disabled = false;
+        errorMsg.style.display = "none";
+        setStep(1);
+      }
+
+      fileInput.addEventListener("change", (e) =>
+        handleFile(e.target.files[0]),
+      );
+      uploadZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadZone.classList.add("drag-over");
+      });
+      uploadZone.addEventListener("dragleave", () =>
+        uploadZone.classList.remove("drag-over"),
+      );
+      uploadZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove("drag-over");
+        handleFile(e.dataTransfer.files[0]);
+      });
+
+      removeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        currentFile = null;
+        previewImg.src = "";
+        previewWrap.style.display = "none";
+        fileInput.value = "";
+        analyzeBtn.disabled = true;
+        resultPlaceholder.style.display = "";
+        resultContent.style.display = "none";
+        noteSection.style.display = "none";
+        errorMsg.style.display = "none";
+        stages.forEach((s) => s.classList.remove("active"));
+        setStep(0);
+      });
+
+      /* ── Helpers ────────────────────────────────────────────── */
+      function highlightStage(m) {
+        stages.forEach((s) =>
+          s.classList.toggle(
+            "active",
+            m >= +s.dataset.min && m <= +s.dataset.max,
+          ),
+        );
+      }
+
+      /* ── Analyse → POST multipart to Flask /predict ─────────── */
+      analyzeBtn.addEventListener("click", async () => {
+        if (!currentFile) return;
+        const sexVal = document.querySelector(
+          'input[name="sex"]:checked',
+        ).value;
+        serverBase = endpointInput.value.trim().replace(/\/$/, "");
+
+        analyzeBtn.disabled = true;
+        spinner.style.display = "block";
+        btnIcon.style.display = "none";
+        btnText.textContent = "Analysing…";
+        errorMsg.style.display = "none";
+        setStep(2);
+
+        try {
+          /* ── Build multipart form — what app.py expects ──────── */
+          const form = new FormData();
+          form.append("image", currentFile); // file field named "image"
+          form.append("sex", sexVal); // text field: "male" | "female"
+
+          setStep(3);
+
+          const response = await fetch(serverBase + "/predict", {
+            method: "POST",
+            body: form,
+            signal: AbortSignal.timeout(30000),
+          });
+
+          if (!response.ok) {
+            const err = await response.json().catch(() => ({}));
+            throw new Error(err.error || `Server returned ${response.status}`);
+          }
+
+          /*
+        app.py returns JSON:
+        { predicted_months, years, months_remainder, age_label,
+          stage, sex, percentile, confidence_note }
+      */
+          const d = await response.json();
+          const months = Math.round(d.predicted_months);
+          const pct = d.percentile ?? Math.round((months / MAX_AGE) * 100);
+
+          resultPlaceholder.style.display = "none";
+          resultContent.style.display = "block";
+          resultContent.classList.add("fade-in");
+
+          resultMonths.innerHTML = `${months} <span>mo</span>`;
+          resultYears.textContent = d.age_label;
+          rowMonths.textContent = `${months} months`;
+          rowYears.textContent = d.age_label;
+          rowStage.textContent = d.stage;
+          rowSex.textContent = sexVal.charAt(0).toUpperCase() + sexVal.slice(1);
+
+          percentilePct.textContent = `${pct}%`;
+          setTimeout(() => {
+            percentileFill.style.width = pct + "%";
+          }, 50);
+
+          if (d.confidence_note) {
+            noteBox.textContent = d.confidence_note;
+            noteSection.style.display = "block";
+          }
+
+          highlightStage(months);
+          setStep(4);
+        } catch (err) {
+          let msg = err.message || "Unknown error.";
+          if (/fetch|Failed|Network|Load/i.test(msg)) {
+            msg = `Cannot reach the server at "${serverBase}". Make sure app.py is running and click Test.`;
+          }
+          errorMsg.textContent = "⚠ " + msg;
+          errorMsg.style.display = "block";
+          setStep(1);
+        } finally {
+          analyzeBtn.disabled = false;
+          spinner.style.display = "none";
+          btnIcon.style.display = "";
+          btnText.textContent = "Analyse X-Ray";
+        }
+      });
+    </script>
+  </body>
+</html>
