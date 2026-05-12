@@ -1,5 +1,5 @@
 const MAX_AGE = 216;
-let serverBase = "http://192.168.1.194:3000";
+let serverBase = "http://127.0.0.1:3000";
 
 const $ = (id) => document.getElementById(id);
 const fileInput = $("fileInput"),

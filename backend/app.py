@@ -42,7 +42,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 # ── Config ─────────────────────────────────────────────────────────────────
-MODEL_PATH = Path("/Users/omarrrefaat/Desktop/deeplearning/smart-bone-age-analyzer/backend/models/best_bone_age_model (1).pth")
+
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "models" / "best_bone_age_model.pth"
 IMG_SIZE   = 256
 MAX_AGE    = 216.0
 DEVICE     = torch.device("cuda" if torch.cuda.is_available() else "cpu")
